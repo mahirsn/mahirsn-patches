@@ -7,6 +7,17 @@ Add to Morphe: https://morphe.software/add-source?github=mahirsn/mahirsn-patches
 ## Patches list
 
 <!-- PATCHES_START EXPANDED -->
+> **[v1.0.0-dev.1](https://github.com/mahirsn/mahirsn-patches/releases/tag/v1.0.0-dev.1)**&nbsp;&nbsp;•&nbsp;&nbsp;`dev`&nbsp;&nbsp;•&nbsp;&nbsp;1 patches total
+<details open>
+<summary>📦 YouTube&nbsp;&nbsp;•&nbsp;&nbsp;1 patch</summary>
+<br>
+
+| 💊&nbsp;Patch | 📜&nbsp;Description | ⚙️&nbsp;Options |
+|----------|----------------|-----------|
+| [Watch history on your server](#watch-history-on-your-server) | Keeps the watch history and resume positions on your own server instead of Google's, so YouTube's history can stay off. Requires Morphe official patches and a yt-history server. | • Server URL<br>• Token |
+
+</details>
+
 <!-- PATCHES_END -->
 
 ### Watch history on your server
