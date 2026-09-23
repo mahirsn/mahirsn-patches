@@ -1,4 +1,4 @@
-rootProject.name = "morphe-patches-template"
+rootProject.name = "mahirsn-patches"
 
 pluginManagement {
     repositories {
@@ -19,3 +19,15 @@ pluginManagement {
 plugins {
     id("app.morphe.patches") version "1.3.4"
 }
+
+settings {
+    extensions {
+        defaultNamespace = "app.mahirsn.extension"
+
+        // Keeps the patch-time settings (serverUrl(), token()) as methods: the patch rewrites them.
+        proguardFiles(rootProject.projectDir.resolve("extensions/proguard-rules.pro").toString())
+    }
+}
+
+// Signatures of the Morphe Patches classes the extension calls; compile only, never shipped.
+include(":stub")

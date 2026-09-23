@@ -1,14 +1,13 @@
-group = "app.template"
+group = "app.mahirsn"
 
 patches {
-    // TODO: Update this section with your project details.
     about {
-        name = "UserXYZ Patches"
-        description = "Patches for apps I like"
-        source = "git@github.com:UserXYZ/morphe-patches.git"
-        author = "Awesome dev"
-        contact = "na"
-        website = "na"
+        name = "mahirsn patches"
+        description = "Add-on for Morphe Patches: YouTube watch history and resume positions on your own server. Requires Morphe official patches."
+        source = "git@github.com:mahirsn/mahirsn-patches.git"
+        author = "mahirsn"
+        contact = "mahirsn@mahirsn.net"
+        website = "https://github.com/mahirsn/mahirsn-patches"
         license = "GPLv3"
     }
 }

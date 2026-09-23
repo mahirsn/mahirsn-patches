@@ -3,5 +3,9 @@ extension {
 }
 
 android {
-    namespace = "app.template.extension"
+    namespace = "app.mahirsn.extension"
+}
+
+dependencies {
+    compileOnly(project(":stub"))
 }
