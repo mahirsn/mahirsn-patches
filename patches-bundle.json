@@ -1,7 +1,7 @@
 {
-  "created_at": "2026-09-24T12:49:09",
-  "description": "## [1.0.1](https://github.com/mahirsn/mahirsn-patches/compare/v1.0.0...v1.0.1) (2026-09-24)\n\n### 🐛 Bug Fixes\n\n* Server URL has a default, and an empty option says which one to fill in ([b39403d](https://github.com/mahirsn/mahirsn-patches/commit/b39403d0b9e758fb3c280b3858bb2b2c3e6cb700))",
-  "download_url": "https://github.com/mahirsn/mahirsn-patches/releases/download/v1.0.1/patches-1.0.1.mpp",
+  "created_at": "2026-09-24T13:10:55",
+  "description": "## [1.0.2-dev.1](https://github.com/mahirsn/mahirsn-patches/compare/v1.0.1...v1.0.2-dev.1) (2026-09-24)\n\n### 🐛 Bug Fixes\n\n* Take the token from the patching computer when the option is empty ([e0c07ea](https://github.com/mahirsn/mahirsn-patches/commit/e0c07ea4ec2eef9e569b62c90232cb378bce081b))",
+  "download_url": "https://github.com/mahirsn/mahirsn-patches/releases/download/v1.0.2-dev.1/patches-1.0.2-dev.1.mpp",
   "signature_download_url": "",
-  "version": "1.0.1"
+  "version": "1.0.2-dev.1"
 }

@@ -1,3 +1,9 @@
+## [1.0.2-dev.1](https://github.com/mahirsn/mahirsn-patches/compare/v1.0.1...v1.0.2-dev.1) (2026-09-24)
+
+### 🐛 Bug Fixes
+
+* Take the token from the patching computer when the option is empty ([e0c07ea](https://github.com/mahirsn/mahirsn-patches/commit/e0c07ea4ec2eef9e569b62c90232cb378bce081b))
+
 ## [1.0.1](https://github.com/mahirsn/mahirsn-patches/compare/v1.0.0...v1.0.1) (2026-09-24)
 
 ### 🐛 Bug Fixes

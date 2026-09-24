@@ -1,6 +1,6 @@
 {
   "NOTE": "Do NOT manually edit this file. This file is automatically updated when semantic release (release.yml) runs. Manually editing this file can break your releases and break third party tools that use this file.",
-  "version": "1.0.1",
+  "version": "1.0.2-dev.1",
   "patches": [
     {
       "name": "Watch history on your server",
@@ -40,8 +40,8 @@
         {
           "key": "token",
           "title": "Token",
-          "description": "Sent to the server in the X-Token header.",
-          "required": true,
+          "description": "Sent to the server in the X-Token header. Leave empty to use YT_HISTORY_TOKEN from the environment or from ~/.config/env/yt-history on the computer that patches.",
+          "required": false,
           "type": "kotlin.String",
           "default": "",
           "values": null
