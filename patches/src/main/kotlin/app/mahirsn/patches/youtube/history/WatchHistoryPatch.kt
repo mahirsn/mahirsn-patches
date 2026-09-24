@@ -71,9 +71,9 @@ val watchHistoryPatch = bytecodePatch(
 
     val serverUrl by stringOption(
         key = "serverUrl",
-        default = "",
+        default = "https://mahirsn.net/yt/api",
         title = "Server URL",
-        description = "Base URL of the history API, for example https://example.com/yt/api",
+        description = "Base URL of the history API of your yt-history server.",
         required = true,
     )
     val token by stringOption(
@@ -85,9 +85,12 @@ val watchHistoryPatch = bytecodePatch(
     )
 
     execute {
-        val url = serverUrl!!.trim().trimEnd('/')
+        val url = (serverUrl ?: "").trim().trimEnd('/')
         if (!url.startsWith("https://") && !url.startsWith("http://")) {
-            throw PatchException("Server URL must start with https:// or http://")
+            throw PatchException("Watch history: set \"Server URL\" in the options of this patch (it must start with https://).")
+        }
+        if ((token ?: "").isBlank()) {
+            throw PatchException("Watch history: set \"Token\" in the options of this patch.")
         }
         val extension = mutableClassDefBy(EXTENSION_CLASS)
         mapOf("serverUrl" to url, "token" to token!!.trim()).forEach { (name, value) ->
