@@ -56,6 +56,16 @@ private fun BytecodePatchContext.checkHost() {
     )
 }
 
+/** The token of the machine that patches, so patching on your own computer needs no typing. */
+private fun localToken(): String? {
+    System.getenv("YT_HISTORY_TOKEN")?.trim()?.takeIf { it.isNotEmpty() }?.let { return it }
+    val file = java.io.File(System.getProperty("user.home") ?: return null, ".config/env/yt-history")
+    return runCatching {
+        file.readLines().firstOrNull { it.startsWith("YT_HISTORY_TOKEN=") }
+            ?.substringAfter('=')?.trim()?.trim('"', '\'')?.takeIf { it.isNotEmpty() }
+    }.getOrNull()
+}
+
 private fun String.smali() = replace("\\", "\\\\").replace("\"", "\\\"")
 
 @Suppress("unused")
@@ -80,8 +90,9 @@ val watchHistoryPatch = bytecodePatch(
         key = "token",
         default = "",
         title = "Token",
-        description = "Sent to the server in the X-Token header.",
-        required = true,
+        description = "Sent to the server in the X-Token header. Leave empty to use YT_HISTORY_TOKEN " +
+            "from the environment or from ~/.config/env/yt-history on the computer that patches.",
+        required = false,
     )
 
     execute {
@@ -89,11 +100,13 @@ val watchHistoryPatch = bytecodePatch(
         if (!url.startsWith("https://") && !url.startsWith("http://")) {
             throw PatchException("Watch history: set \"Server URL\" in the options of this patch (it must start with https://).")
         }
-        if ((token ?: "").isBlank()) {
-            throw PatchException("Watch history: set \"Token\" in the options of this patch.")
-        }
+        val key = (token ?: "").trim().ifEmpty { localToken() }
+            ?: throw PatchException(
+                "Watch history: no token. Set \"Token\" in the options of this patch, or put " +
+                    "YT_HISTORY_TOKEN=... into ~/.config/env/yt-history on this computer."
+            )
         val extension = mutableClassDefBy(EXTENSION_CLASS)
-        mapOf("serverUrl" to url, "token" to token!!.trim()).forEach { (name, value) ->
+        mapOf("serverUrl" to url, "token" to key).forEach { (name, value) ->
             extension.methods.first { it.name == name }.addInstructions(
                 0,
                 """
