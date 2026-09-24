@@ -1,3 +1,9 @@
+## [1.0.3-dev.1](https://github.com/mahirsn/mahirsn-patches/compare/v1.0.2...v1.0.3-dev.1) (2026-09-24)
+
+### 🐛 Bug Fixes
+
+* Leave out the previews that play in the feeds ([611b15f](https://github.com/mahirsn/mahirsn-patches/commit/611b15fcb3e852384f8f8e93d7698430795947a8))
+
 ## [1.0.2](https://github.com/mahirsn/mahirsn-patches/compare/v1.0.1...v1.0.2) (2026-09-24)
 
 ### 🐛 Bug Fixes
