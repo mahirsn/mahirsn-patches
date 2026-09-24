@@ -14,6 +14,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import app.morphe.extension.youtube.addon.AddOnApi;
 import app.morphe.extension.youtube.patches.VideoInformation;
+import app.morphe.extension.youtube.shared.PlayerType;
 import app.morphe.extension.youtube.shared.VideoState;
 
 /**
@@ -22,7 +23,7 @@ import app.morphe.extension.youtube.shared.VideoState;
  * <p>
  * Reports the video that plays (id, title, channel, position, length) every few seconds and when
  * playback pauses, ends or moves to another video, and seeks a reopened video to where it was left.
- * Shorts are left out. Runs on the Morphe Patches add-on hooks; all network calls are off the main
+ * Shorts and the muted previews that play in the feeds are left out. Runs on the Morphe Patches add-on hooks; all network calls are off the main
  * thread and failures are silent, so a server that is down never affects playback.
  */
 @SuppressWarnings("unused")
@@ -86,8 +87,15 @@ public final class WatchHistory {
         });
     }
 
+    /** The watch player is on screen (in any size), not a feed preview or a Short. */
+    private static boolean onWatchPlayer() {
+        String type = PlayerType.getCurrent().name();
+        return type.startsWith("WATCH_WHILE") || type.equals("VIRTUAL_REALITY_FULLSCREEN");
+    }
+
     private static void onVideoTime(long time) {
-        if (videoId == null || VideoInformation.lastVideoIdIsShort()) return;
+        // A preview never gets a position, so flush() never reports it either.
+        if (videoId == null || VideoInformation.lastVideoIdIsShort() || !onWatchPlayer()) return;
         timeMs = time;
         long length = VideoInformation.getVideoLength();
         if (length > 0) lengthMs = length;

@@ -30,6 +30,9 @@ private val REQUIRED_HOST_METHODS = mapOf(
         "lastVideoIdIsShort()Z",
         "seekTo(J)Z",
     ),
+    "Lapp/morphe/extension/youtube/shared/PlayerType;" to setOf(
+        "getCurrent()Lapp/morphe/extension/youtube/shared/PlayerType;",
+    ),
 )
 
 /** Supported versions are whatever the Morphe Patches bundle used alongside supports. */
