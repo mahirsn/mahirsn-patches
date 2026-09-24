@@ -1,6 +1,6 @@
 {
   "NOTE": "Do NOT manually edit this file. This file is automatically updated when semantic release (release.yml) runs. Manually editing this file can break your releases and break third party tools that use this file.",
-  "version": "1.0.0",
+  "version": "1.0.1-dev.1",
   "patches": [
     {
       "name": "Watch history on your server",
@@ -31,10 +31,10 @@
         {
           "key": "serverUrl",
           "title": "Server URL",
-          "description": "Base URL of the history API, for example https://example.com/yt/api",
+          "description": "Base URL of the history API of your yt-history server.",
           "required": true,
           "type": "kotlin.String",
-          "default": "",
+          "default": "https://mahirsn.net/yt/api",
           "values": null
         },
         {
