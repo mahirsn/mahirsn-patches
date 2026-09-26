@@ -126,11 +126,11 @@ private const val PREFERENCES = """
             app:iconSpaceReserved="true">
             <SwitchPreference android:key="mahirsn_history_resume_ask" android:defaultValue="true"
                 android:title="Ask to continue"
-                android:summaryOn="A video you watched before offers &quot;Continue at 12:34&quot; for a few seconds"
+                android:summaryOn="A video you watched before offers &quot;Keep watching · 12:34&quot; in the player for a few seconds"
                 android:summaryOff="A video you watched before continues where you left it by itself" />
             <SwitchPreference android:key="mahirsn_history_resume_button" android:defaultValue="true"
                 android:title="Continue button in the player"
-                android:summary="Next to the captions button: jumps to where you left the video. Long press opens your history" />
+                android:summary="Next to the other player buttons: jumps to where you left the video. Long press opens your history" />
             <SwitchPreference android:key="mahirsn_history_tab_shorts" android:defaultValue="false"
                 android:title="History instead of Shorts"
                 android:summary="The Shorts button of the navigation bar opens your history. Shows the button even if Shorts is hidden in the navigation bar settings" />
