@@ -114,6 +114,7 @@ public final class WatchHistory {
             long pos = (long) (number(body, "pos") * 1000);
             long len = (long) (number(body, "len") * 1000);
             main.post(() -> {
+                Log.i(TAG, "saved position of " + asked + ": " + pos + " / " + len);
                 if (!asked.equals(videoId) || pos <= RESUME_MIN_MS || (len > 0 && pos >= len - RESUME_END_MS)) return;
                 resumeFor = asked;
                 resumeAtMs = pos;
@@ -190,15 +191,23 @@ public final class WatchHistory {
         View player = playerView.get();
         if (player == null || !player.isAttachedToWindow()) {
             // The player controls are created a moment after the video starts.
-            if (attempt < 20) main.postDelayed(() -> showPrompt(attempt + 1), 250);
+            if (attempt < 60) main.postDelayed(() -> showPrompt(attempt + 1), 250);
+            else Log.i(TAG, "prompt: no player view");
             return;
         }
-        if (!canResume() || !onWatchPlayer()) return;
+        if (!canResume() || !onWatchPlayer()) {
+            Log.i(TAG, "prompt: not now, " + PlayerType.getCurrent() + " at " + timeMs + " of " + resumeAtMs);
+            return;
+        }
         dismissPrompt();
         Context ctx = player.getContext();
         String label = Ui.str(ctx, "keep_watching", "Keep watching") + " · " + Ui.clock(resumeAtMs);
         ResumeChip chip = new ResumeChip(ctx, label, WatchHistory::resume);
-        if (!chip.attach(player)) return;
+        if (!chip.attach(player)) {
+            Log.i(TAG, "prompt: no place in the player");
+            return;
+        }
+        Log.i(TAG, "prompt: shown");
         prompt = chip;
         main.postDelayed(() -> { if (prompt == chip) dismissPrompt(); }, PROMPT_SHOWN_MS);
     }
@@ -239,6 +248,7 @@ public final class WatchHistory {
      * both exist before it patches anything.
      */
     private static void onPlayerButtons(View sourceButton) {
+        Log.i(TAG, "player buttons, legacy " + legacyButtons());
         playerView = new WeakReference<>(sourceButton);
         if (legacyButtons() || !Prefs.BUTTON.get()) return;
         try {
@@ -247,11 +257,12 @@ public final class WatchHistory {
                             View.OnClickListener.class, View.OnLongClickListener.class)
                     .invoke(null, sourceButton, "mahirsn_history_resume_bold", RESUME_CLICK, HISTORY_LONG_CLICK);
         } catch (Throwable e) {
-            Log.d(TAG, "player button: " + e);
+            Log.i(TAG, "player button: " + e);
         }
     }
 
     private static void onLegacyControls(View controls) {
+        Log.i(TAG, "legacy controls, legacy " + legacyButtons());
         playerView = new WeakReference<>(controls);
         if (!legacyButtons()) return;
         try {
@@ -261,7 +272,7 @@ public final class WatchHistory {
                     .invoke(null, "mahirsn_history", controls, "mahirsn_history_resume",
                             Prefs.BUTTON, RESUME_CLICK, HISTORY_LONG_CLICK);
         } catch (Throwable e) {
-            Log.d(TAG, "legacy button: " + e);
+            Log.i(TAG, "legacy button: " + e);
         }
     }
 
@@ -281,7 +292,7 @@ public final class WatchHistory {
             tab.setVisibility(View.VISIBLE);
             tab.post(() -> makeHistoryTab(tab));
         } catch (Exception e) {
-            Log.d(TAG, "tab: " + e);
+            Log.i(TAG, "tab: " + e);
         }
     }
 
@@ -340,7 +351,7 @@ public final class WatchHistory {
                 return buf.toString("UTF-8");
             }
         } catch (Exception e) {
-            Log.d(TAG, method + " " + path + ": " + e);
+            Log.i(TAG, method + " " + path + ": " + e);
             return null;
         } finally {
             if (c != null) c.disconnect();
