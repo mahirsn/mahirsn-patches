@@ -1,3 +1,9 @@
+## [1.2.0-dev.1](https://github.com/mahirsn/mahirsn-patches/compare/v1.1.0...v1.2.0-dev.1) (2026-09-26)
+
+### ✨ New Features
+
+* Remove a video from the history, and keep the history screen's system bars in its own color ([7cc95b6](https://github.com/mahirsn/mahirsn-patches/commit/7cc95b6fa506e389e3a251b9efa34631e57a489d))
+
 ## [1.1.0](https://github.com/mahirsn/mahirsn-patches/compare/v1.0.3...v1.1.0) (2026-09-26)
 
 ### 🐛 Bug Fixes
