@@ -1,3 +1,9 @@
+## [1.1.0-dev.1](https://github.com/mahirsn/mahirsn-patches/compare/v1.0.3...v1.1.0-dev.1) (2026-09-26)
+
+### ✨ New Features
+
+* Continue prompt and button, a history screen, History in place of Shorts or Home, and a Personal history settings section ([3224102](https://github.com/mahirsn/mahirsn-patches/commit/3224102858b089d59d538317f5634318ad93382c))
+
 ## [1.0.3](https://github.com/mahirsn/mahirsn-patches/compare/v1.0.2...v1.0.3) (2026-09-24)
 
 ### 🐛 Bug Fixes
