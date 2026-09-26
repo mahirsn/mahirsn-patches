@@ -54,6 +54,7 @@ final class HistoryDialog {
     }
 
     static void show(Context ctx) {
+        android.util.Log.i("WatchHistory", "history dialog for " + ctx);
         // YouTube's theme colors and font, whichever of light or dark the app is in.
         int bg = Ui.attr(ctx, "ytBaseBackground", Color.WHITE);
         int fg = Ui.attr(ctx, "ytTextPrimary", 0xFF0F0F0F);

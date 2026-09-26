@@ -355,7 +355,9 @@ public final class WatchHistory {
         while (bar.getParent() instanceof View && Ui.id(ctx, "id", "pivot_bar") != bar.getId()) bar = (View) bar.getParent();
         if (Ui.id(ctx, "id", "pivot_bar") != bar.getId()) bar = (View) tab.getParent();
         historyTabs.add(new WeakReference<>(tab));
+        Log.i(TAG, "history tab: " + tab + " in " + bar);
         tab.setOnTouchListener((v, e) -> {
+            Log.i(TAG, "history tab touch " + e.getActionMasked());
             if (e.getActionMasked() == MotionEvent.ACTION_UP) HistoryDialog.show(v.getContext());
             return true;
         });
@@ -363,6 +365,7 @@ public final class WatchHistory {
             bar.setTag(TAG_KEY, true);
             bar.setOnTouchListener((v, e) -> {
                 View hit = historyTabAt(e.getRawX(), e.getRawY());
+                Log.i(TAG, "bar touch " + e.getActionMasked() + " hit " + (hit != null));
                 if (hit == null) return false;
                 if (e.getActionMasked() == MotionEvent.ACTION_UP) HistoryDialog.show(v.getContext());
                 return true;
