@@ -1,3 +1,9 @@
+## [1.1.0-dev.9](https://github.com/mahirsn/mahirsn-patches/compare/v1.1.0-dev.8...v1.1.0-dev.9) (2026-09-26)
+
+### 🐛 Bug Fixes
+
+* The history screen shows the app's spinner while loading and its own message when offline ([2d4a5de](https://github.com/mahirsn/mahirsn-patches/commit/2d4a5de7cafea3f5d0cd90bd3c4c6c46de03defd))
+
 ## [1.1.0-dev.8](https://github.com/mahirsn/mahirsn-patches/compare/v1.1.0-dev.7...v1.1.0-dev.8) (2026-09-26)
 
 ### 🐛 Bug Fixes
