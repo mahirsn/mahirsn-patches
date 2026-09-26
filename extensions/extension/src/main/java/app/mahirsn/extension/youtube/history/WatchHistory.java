@@ -188,9 +188,9 @@ public final class WatchHistory {
 
     /** "Keep watching · 12:34" in the player for a few seconds, styled like YouTube's "Skip ad". */
     private static void showPrompt(int attempt) {
-        View player = playerView.get();
-        if (player == null || !player.isAttachedToWindow()) {
-            // The player controls are created a moment after the video starts.
+        View player = playerRoot();
+        if (player == null) {
+            // The player is laid out a moment after the video starts.
             if (attempt < 60) main.postDelayed(() -> showPrompt(attempt + 1), 250);
             else Log.i(TAG, "prompt: no player view");
             return;
@@ -210,6 +210,26 @@ public final class WatchHistory {
         Log.i(TAG, "prompt: shown");
         prompt = chip;
         main.postDelayed(() -> { if (prompt == chip) dismissPrompt(); }, PROMPT_SHOWN_MS);
+    }
+
+    /**
+     * The window the player is in, once the player's overlay exists there. The player controls
+     * (and with them the button listeners) are only created when the controls are first shown,
+     * so the current activity is the way in until then.
+     */
+    private static View playerRoot() {
+        View known = playerView.get();
+        View root = known != null && known.isAttachedToWindow() ? known.getRootView() : null;
+        if (root == null) {
+            try {
+                Object activity = Class.forName("app.morphe.extension.shared.Utils").getMethod("getActivity").invoke(null);
+                if (activity instanceof android.app.Activity) root = ((android.app.Activity) activity).getWindow().getDecorView();
+            } catch (Throwable ignored) {
+            }
+        }
+        if (root == null) return null;
+        return Ui.find(root, "morphe_sb_skip_sponsor_button") != null || Ui.find(root, "youtube_controls_overlay") != null
+                ? root : null;
     }
 
     private static void dismissPrompt() {

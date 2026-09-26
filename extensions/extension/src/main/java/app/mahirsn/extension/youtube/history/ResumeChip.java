@@ -78,8 +78,7 @@ final class ResumeChip extends FrameLayout {
      * Shows the chip in the player: next to SponsorBlock's skip button (same parent, same place),
      * else in the bottom corner of the player overlay where YouTube puts "Skip ad".
      */
-    boolean attach(View player) {
-        View root = player.getRootView();
+    boolean attach(View root) {
         View sponsorSkip = Ui.find(root, "morphe_sb_skip_sponsor_button");
         if (sponsorSkip != null && sponsorSkip.getParent() instanceof ViewGroup) {
             ViewGroup parent = (ViewGroup) sponsorSkip.getParent();

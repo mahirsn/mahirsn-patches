@@ -44,6 +44,9 @@ private val REQUIRED_HOST_METHODS = mapOf(
         "getCurrent()Lapp/morphe/extension/youtube/shared/PlayerType;",
     ),
     // Called by reflection, to keep Android types out of the compile-only stubs.
+    "Lapp/morphe/extension/shared/Utils;" to setOf(
+        "getActivity()Landroid/app/Activity;",
+    ),
     "Lapp/morphe/extension/youtube/videoplayer/PlayerOverlayButton;" to setOf(
         "addButton(Landroid/view/View;Ljava/lang/String;Landroid/view/View\$OnClickListener;" +
             "Landroid/view/View\$OnLongClickListener;)Landroid/widget/ImageView;",
