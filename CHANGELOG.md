@@ -1,3 +1,9 @@
+## [1.1.0-dev.11](https://github.com/mahirsn/mahirsn-patches/compare/v1.1.0-dev.10...v1.1.0-dev.11) (2026-09-26)
+
+### 🐛 Bug Fixes
+
+* Setting summaries describe the chip and the button as they are ([a14550b](https://github.com/mahirsn/mahirsn-patches/commit/a14550bed99ebb75860ad8872d50378e55538fc8))
+
 ## [1.1.0-dev.10](https://github.com/mahirsn/mahirsn-patches/compare/v1.1.0-dev.9...v1.1.0-dev.10) (2026-09-26)
 
 ### 🐛 Bug Fixes
