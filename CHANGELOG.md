@@ -1,3 +1,9 @@
+## [1.1.0-dev.5](https://github.com/mahirsn/mahirsn-patches/compare/v1.1.0-dev.4...v1.1.0-dev.5) (2026-09-26)
+
+### 🐛 Bug Fixes
+
+* History in the navigation bar opens the history and keeps its icon ([dc352a5](https://github.com/mahirsn/mahirsn-patches/commit/dc352a535222c9f133064f3a2d8ee222016dee43))
+
 ## [1.1.0-dev.4](https://github.com/mahirsn/mahirsn-patches/compare/v1.1.0-dev.3...v1.1.0-dev.4) (2026-09-26)
 
 ### 🐛 Bug Fixes

@@ -7,7 +7,7 @@ Add to Morphe: https://morphe.software/add-source?github=mahirsn/mahirsn-patches
 ## Patches list
 
 <!-- PATCHES_START EXPANDED -->
-> **[v1.1.0-dev.4](https://github.com/mahirsn/mahirsn-patches/releases/tag/v1.1.0-dev.4)**&nbsp;&nbsp;•&nbsp;&nbsp;`dev`&nbsp;&nbsp;•&nbsp;&nbsp;1 patches total
+> **[v1.1.0-dev.5](https://github.com/mahirsn/mahirsn-patches/releases/tag/v1.1.0-dev.5)**&nbsp;&nbsp;•&nbsp;&nbsp;`dev`&nbsp;&nbsp;•&nbsp;&nbsp;1 patches total
 <details open>
 <summary>📦 YouTube&nbsp;&nbsp;•&nbsp;&nbsp;1 patch</summary>
 <br>
