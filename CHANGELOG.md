@@ -1,3 +1,9 @@
+## [1.1.0-dev.4](https://github.com/mahirsn/mahirsn-patches/compare/v1.1.0-dev.3...v1.1.0-dev.4) (2026-09-26)
+
+### 🐛 Bug Fixes
+
+* Offer to continue as soon as the player is there, not when its controls are first shown ([a76f01e](https://github.com/mahirsn/mahirsn-patches/commit/a76f01e43916546a97d56c59d792d9787eb06d3c))
+
 ## [1.1.0-dev.3](https://github.com/mahirsn/mahirsn-patches/compare/v1.1.0-dev.2...v1.1.0-dev.3) (2026-09-26)
 
 ### 🐛 Bug Fixes
