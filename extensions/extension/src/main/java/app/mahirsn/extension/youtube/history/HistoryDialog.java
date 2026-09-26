@@ -1,6 +1,6 @@
 package app.mahirsn.extension.youtube.history;
 
-import static app.mahirsn.extension.youtube.history.WatchHistory.dp;
+import static app.mahirsn.extension.youtube.history.Ui.dp;
 
 import android.app.Dialog;
 import android.content.Context;
@@ -54,27 +54,31 @@ final class HistoryDialog {
     }
 
     static void show(Context ctx) {
-        boolean dark = (ctx.getResources().getConfiguration().uiMode
-                & Configuration.UI_MODE_NIGHT_MASK) != Configuration.UI_MODE_NIGHT_NO;
-        int bg = dark ? 0xFF0F0F0F : Color.WHITE;
-        int fg = dark ? Color.WHITE : 0xFF0F0F0F;
-        int dim = dark ? 0xFFAAAAAA : 0xFF606060;
-        int chipOff = dark ? 0xFF272727 : 0xFFF2F2F2;
+        // YouTube's theme colors and font, whichever of light or dark the app is in.
+        int bg = Ui.attr(ctx, "ytBaseBackground", Color.WHITE);
+        int fg = Ui.attr(ctx, "ytTextPrimary", 0xFF0F0F0F);
+        int dim = Ui.attr(ctx, "ytTextSecondary", 0xFF606060);
+        int chipOff = Ui.attr(ctx, "ytAdditiveBackground", 0x1A000000);
+        int red = Ui.attr(ctx, "ytStaticBrandRed", 0xFFFF0033);
 
-        Dialog dialog = new Dialog(ctx, android.R.style.Theme_DeviceDefault_NoActionBar);
+        Dialog dialog = new Dialog(ctx, android.R.style.Theme_Black_NoTitleBar_Fullscreen);
         LinearLayout root = new LinearLayout(ctx);
         root.setOrientation(LinearLayout.VERTICAL);
         root.setBackgroundColor(bg);
+        root.setFitsSystemWindows(true);
 
-        // Header: back, title
+        // Header like YouTube's own pages: back arrow and title.
         LinearLayout header = new LinearLayout(ctx);
         header.setGravity(Gravity.CENTER_VERTICAL);
-        header.setPadding(dp(ctx, 4), dp(ctx, 4), dp(ctx, 16), dp(ctx, 4));
-        TextView back = text(ctx, "←", 22, fg);
-        back.setPadding(dp(ctx, 16), dp(ctx, 12), dp(ctx, 16), dp(ctx, 12));
+        header.setMinimumHeight(dp(ctx, 56));
+        ImageView back = new ImageView(ctx);
+        int arrow = Ui.id(ctx, "drawable", "yt_outline_arrow_left_vd_theme_24");
+        if (arrow != 0) back.setImageResource(arrow);
+        back.setColorFilter(fg);
+        back.setScaleType(ImageView.ScaleType.CENTER);
         back.setOnClickListener(v -> dialog.dismiss());
-        header.addView(back);
-        TextView title = text(ctx, "History", 20, fg);
+        header.addView(back, new LinearLayout.LayoutParams(dp(ctx, 56), dp(ctx, 56)));
+        TextView title = Ui.text(ctx, Ui.str(ctx, "morphe_change_start_page_entry_history", "History"), 20, fg);
         title.setTypeface(Typeface.DEFAULT_BOLD);
         header.addView(title);
         root.addView(header);
@@ -82,12 +86,12 @@ final class HistoryDialog {
         // All / Courses
         LinearLayout chips = new LinearLayout(ctx);
         chips.setPadding(dp(ctx, 12), 0, dp(ctx, 12), dp(ctx, 8));
-        TextView all = chip(ctx, "All"), courses = chip(ctx, "Courses");
+        TextView all = chip(ctx, Ui.str(ctx, "downloads_page_all_menu_item", "All")), courses = chip(ctx, "Courses");
         chips.addView(all);
         chips.addView(courses);
         root.addView(chips);
 
-        TextView status = text(ctx, "Loading…", 14, dim);
+        TextView status = Ui.text(ctx, "…", 14, dim);
         status.setPadding(dp(ctx, 16), dp(ctx, 24), dp(ctx, 16), 0);
         root.addView(status);
 
@@ -103,7 +107,7 @@ final class HistoryDialog {
             public Object getItem(int i) { return shown.get(i); }
             public long getItemId(int i) { return i; }
             public View getView(int i, View convert, ViewGroup parent) {
-                return row(ctx, convert, shown.get(i), fg, dim);
+                return row(ctx, convert, shown.get(i), fg, dim, red);
             }
         };
         list.setAdapter(adapter);
@@ -134,6 +138,7 @@ final class HistoryDialog {
         Window w = dialog.getWindow();
         if (w != null) {
             w.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+            w.setBackgroundDrawable(new android.graphics.drawable.ColorDrawable(bg));
             w.setStatusBarColor(bg);
             w.setNavigationBarColor(bg);
         }
@@ -144,7 +149,7 @@ final class HistoryDialog {
             List<Item> loaded = parse(body);
             WatchHistory.main.post(() -> {
                 if (loaded == null) {
-                    status.setText("Could not reach the history server");
+                    status.setText("–");
                     return;
                 }
                 items.addAll(loaded);
@@ -186,11 +191,11 @@ final class HistoryDialog {
         ctx.startActivity(intent);
     }
 
-    private static View row(Context ctx, View convert, Item it, int fg, int dim) {
+    private static View row(Context ctx, View convert, Item it, int fg, int dim, int red) {
         LinearLayout row;
         ImageView thumb;
         View bar;
-        TextView name, meta;
+        TextView name, meta, badge;
         if (convert instanceof LinearLayout && convert.getTag() instanceof Object[]) {
             row = (LinearLayout) convert;
             Object[] h = (Object[]) row.getTag();
@@ -198,6 +203,7 @@ final class HistoryDialog {
             bar = (View) h[1];
             name = (TextView) h[2];
             meta = (TextView) h[3];
+            badge = (TextView) h[4];
         } else {
             row = new LinearLayout(ctx);
             row.setPadding(dp(ctx, 12), dp(ctx, 6), dp(ctx, 12), dp(ctx, 6));
@@ -207,8 +213,18 @@ final class HistoryDialog {
             thumb.setBackgroundColor(0xFF303030);
             frame.addView(thumb, new FrameLayout.LayoutParams(-1, -1));
             bar = new View(ctx);
-            bar.setBackgroundColor(0xFFFF0033);
-            frame.addView(bar, new FrameLayout.LayoutParams(0, dp(ctx, 3), Gravity.BOTTOM));
+            bar.setBackgroundColor(red);
+            frame.addView(bar, new FrameLayout.LayoutParams(0, dp(ctx, 4), Gravity.BOTTOM));
+            // Length on the thumbnail, as YouTube shows it.
+            badge = Ui.text(ctx, "", 12, Color.WHITE);
+            badge.setPadding(dp(ctx, 4), dp(ctx, 2), dp(ctx, 4), dp(ctx, 2));
+            GradientDrawable badgeBg = new GradientDrawable();
+            badgeBg.setColor(0xCC000000);
+            badgeBg.setCornerRadius(dp(ctx, 4));
+            badge.setBackground(badgeBg);
+            FrameLayout.LayoutParams blp = new FrameLayout.LayoutParams(-2, -2, Gravity.BOTTOM | Gravity.END);
+            blp.setMargins(0, 0, dp(ctx, 4), dp(ctx, 8));
+            frame.addView(badge, blp);
             frame.setClipToOutline(true);
             GradientDrawable round = new GradientDrawable();
             round.setCornerRadius(dp(ctx, 8));
@@ -218,27 +234,26 @@ final class HistoryDialog {
             LinearLayout texts = new LinearLayout(ctx);
             texts.setOrientation(LinearLayout.VERTICAL);
             texts.setPadding(dp(ctx, 12), 0, 0, 0);
-            name = text(ctx, "", 15, fg);
+            name = Ui.text(ctx, "", 15, fg);
             name.setMaxLines(2);
             name.setEllipsize(TextUtils.TruncateAt.END);
             texts.addView(name);
-            meta = text(ctx, "", 12, dim);
+            meta = Ui.text(ctx, "", 12, dim);
             meta.setMaxLines(3);
             meta.setPadding(0, dp(ctx, 4), 0, 0);
             texts.addView(meta);
             row.addView(texts, new LinearLayout.LayoutParams(0, -2, 1));
-            row.setTag(new Object[]{thumb, bar, name, meta});
+            row.setTag(new Object[]{thumb, bar, name, meta, badge});
         }
 
         name.setText(it.title);
         StringBuilder m = new StringBuilder();
         if (!it.channel.isEmpty()) m.append(it.channel).append('\n');
-        boolean finished = it.len > 0 && it.pos >= it.len - END_S;
-        m.append(finished ? "Watched" : WatchHistory.clock((long) (it.pos * 1000))
-                + (it.len > 0 ? " / " + WatchHistory.clock((long) (it.len * 1000)) : ""));
-        if (it.last > 0) m.append(" · ").append(DateFormat.getDateInstance(DateFormat.MEDIUM).format(new Date((long) (it.last * 1000))));
+        if (it.last > 0) m.append(DateFormat.getDateInstance(DateFormat.MEDIUM).format(new Date((long) (it.last * 1000))));
         if (!TextUtils.isEmpty(it.course)) m.append('\n').append(it.course);
         meta.setText(m);
+        badge.setText(it.len > 0 ? Ui.clock((long) (it.len * 1000)) : "");
+        badge.setVisibility(it.len > 0 ? View.VISIBLE : View.GONE);
 
         float done = it.len > 0 ? (float) Math.min(1, it.pos / it.len) : 0;
         FrameLayout.LayoutParams lp = (FrameLayout.LayoutParams) bar.getLayoutParams();
@@ -263,16 +278,8 @@ final class HistoryDialog {
         return row;
     }
 
-    private static TextView text(Context ctx, String s, float sp, int color) {
-        TextView t = new TextView(ctx);
-        t.setText(s);
-        t.setTextSize(TypedValue.COMPLEX_UNIT_SP, sp);
-        t.setTextColor(color);
-        return t;
-    }
-
     private static TextView chip(Context ctx, String s) {
-        TextView t = text(ctx, s, 14, Color.WHITE);
+        TextView t = Ui.text(ctx, s, 14, Color.WHITE);
         t.setPadding(dp(ctx, 14), dp(ctx, 7), dp(ctx, 14), dp(ctx, 7));
         LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(-2, -2);
         lp.setMarginEnd(dp(ctx, 8));

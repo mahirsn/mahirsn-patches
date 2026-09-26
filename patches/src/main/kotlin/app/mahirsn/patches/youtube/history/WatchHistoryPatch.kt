@@ -27,6 +27,11 @@ private val REQUIRED_HOST_METHODS = mapOf(
         "addVideoTimeListener(Ljava/util/function/LongConsumer;)V",
         "addVideoStateListener(Ljava/util/function/Consumer;)V",
         "addPlayerOverlayButtonsListener(Ljava/util/function/Consumer;)V",
+        "addLegacyPlayerControlsListener(Ljava/util/function/Consumer;)V",
+        // Called by reflection, like addButton below.
+        "createLegacyButton(Ljava/lang/String;Landroid/view/View;Ljava/lang/String;" +
+            "Lapp/morphe/extension/shared/settings/BooleanSetting;Landroid/view/View\$OnClickListener;" +
+            "Landroid/view/View\$OnLongClickListener;)Lapp/morphe/extension/youtube/videoplayer/LegacyPlayerControlButton;",
     ),
     "Lapp/morphe/extension/youtube/patches/VideoInformation;" to setOf(
         "getVideoTitle()Ljava/lang/String;",
@@ -135,7 +140,11 @@ private const val ADD_ON_PREFERENCES_FILE = "morphe_addon_prefs.xml"
 private val watchHistoryResourcesPatch = resourcePatch {
     execute {
         get("res/drawable").mkdirs()
+        // Player buttons: the plain name for the old style buttons, "_bold" for the current ones,
+        // the same pair every Morphe player button has.
         get("res/drawable/mahirsn_history_resume.xml").writeText(vector("#FFFFFFFF"))
+        get("res/drawable/mahirsn_history_resume_bold.xml").writeText(vector("#FFFFFFFF"))
+        // Navigation bar fallback, where the app has no history icon of its own.
         get("res/drawable/mahirsn_history_tab.xml").writeText(vector("?android:attr/textColorPrimary"))
 
         // Other add-ons may have declared preferences in the same file already.
