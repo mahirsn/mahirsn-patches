@@ -1,3 +1,9 @@
+## [1.1.0-dev.10](https://github.com/mahirsn/mahirsn-patches/compare/v1.1.0-dev.9...v1.1.0-dev.10) (2026-09-26)
+
+### 🐛 Bug Fixes
+
+* Personal history uses the Morphe settings row layout ([8a3d9b0](https://github.com/mahirsn/mahirsn-patches/commit/8a3d9b08d77ca14591bbadb7abc6fbcd56d79137))
+
 ## [1.1.0-dev.9](https://github.com/mahirsn/mahirsn-patches/compare/v1.1.0-dev.8...v1.1.0-dev.9) (2026-09-26)
 
 ### 🐛 Bug Fixes
