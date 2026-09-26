@@ -1,3 +1,9 @@
+## [1.1.0-dev.8](https://github.com/mahirsn/mahirsn-patches/compare/v1.1.0-dev.7...v1.1.0-dev.8) (2026-09-26)
+
+### 🐛 Bug Fixes
+
+* Take the History button's clicks too, not only its touches ([397cc56](https://github.com/mahirsn/mahirsn-patches/commit/397cc56e6a4b2586e334935db9ce432aff7b536e))
+
 ## [1.1.0-dev.7](https://github.com/mahirsn/mahirsn-patches/compare/v1.1.0-dev.6...v1.1.0-dev.7) (2026-09-26)
 
 ### 🐛 Bug Fixes
