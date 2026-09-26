@@ -338,10 +338,13 @@ public final class WatchHistory {
                 android.graphics.drawable.Drawable[] ours = {icon.getDrawable()};
                 // The app sets the button's own icon again whenever the selected button changes
                 // (a filled Home when Home is the start page); put History back before drawing.
+                View clickTarget = tab;
                 icon.getViewTreeObserver().addOnPreDrawListener(() -> {
                     if (icon.getDrawable() != ours[0]) {
                         icon.setImageResource(historyIcon);
                         ours[0] = icon.getDrawable();
+                        // Rebinding the button also gives it the app's click handler again.
+                        clickTarget.setOnClickListener(OPEN_HISTORY);
                     }
                     return true;
                 });
@@ -355,6 +358,8 @@ public final class WatchHistory {
         while (bar.getParent() instanceof View && Ui.id(ctx, "id", "pivot_bar") != bar.getId()) bar = (View) bar.getParent();
         if (Ui.id(ctx, "id", "pivot_bar") != bar.getId()) bar = (View) tab.getParent();
         historyTabs.add(new WeakReference<>(tab));
+        // The app may deliver the tap as a click on the button (performClick) rather than as touches.
+        tab.setOnClickListener(OPEN_HISTORY);
         Log.i(TAG, "history tab: " + tab + " in " + bar);
         tab.setOnTouchListener((v, e) -> {
             Log.i(TAG, "history tab touch " + e.getActionMasked());
@@ -372,6 +377,11 @@ public final class WatchHistory {
             });
         }
     }
+
+    private static final View.OnClickListener OPEN_HISTORY = v -> {
+        Log.i(TAG, "history tab click");
+        HistoryDialog.show(v.getContext());
+    };
 
     private static final int TAG_KEY = 0x6d61686e; // any id outside the app's
     private static final java.util.List<WeakReference<View>> historyTabs = new java.util.ArrayList<>();
