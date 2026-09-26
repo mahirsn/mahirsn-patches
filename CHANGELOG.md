@@ -1,3 +1,9 @@
+## [1.1.0-dev.6](https://github.com/mahirsn/mahirsn-patches/compare/v1.1.0-dev.5...v1.1.0-dev.6) (2026-09-26)
+
+### 🐛 Bug Fixes
+
+* Log the navigation bar History button's touches ([a4a502b](https://github.com/mahirsn/mahirsn-patches/commit/a4a502b0236a4580bf7b34137efa35ec820f597f))
+
 ## [1.1.0-dev.5](https://github.com/mahirsn/mahirsn-patches/compare/v1.1.0-dev.4...v1.1.0-dev.5) (2026-09-26)
 
 ### 🐛 Bug Fixes
