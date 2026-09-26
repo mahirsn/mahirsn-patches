@@ -111,14 +111,40 @@ final class HistoryDialog {
         list.setVisibility(View.GONE);
         root.addView(list, new LinearLayout.LayoutParams(-1, 0, 1));
 
+        boolean[] courseOnly = {false};
+        BaseAdapter[] adapterRef = new BaseAdapter[1];
+        Runnable refresh = () -> {
+            shown.clear();
+            for (Item it : items) if (!courseOnly[0] || !TextUtils.isEmpty(it.course)) shown.add(it);
+            adapterRef[0].notifyDataSetChanged();
+            status.setVisibility(shown.isEmpty() ? View.VISIBLE : View.GONE);
+            list.setVisibility(shown.isEmpty() ? View.GONE : View.VISIBLE);
+            if (shown.isEmpty()) status.setText(courseOnly[0] ? "No courses yet" : "Nothing watched yet");
+        };
+        // "⋮" on a video: remove it from the history, here, on the server and in Notion.
+        java.util.function.Consumer<Item> onMore = it -> menu(ctx, fg, () -> {
+            int at = items.indexOf(it);
+            items.remove(it);
+            refresh.run();
+            WatchHistory.io.execute(() -> {
+                boolean ok = WatchHistory.request("DELETE", "/progress/" + it.id, null) != null;
+                if (!ok) WatchHistory.main.post(() -> {
+                    items.add(Math.max(0, at), it);
+                    refresh.run();
+                    android.widget.Toast.makeText(ctx, Ui.str(ctx, "common_no_network", "No connection"),
+                            android.widget.Toast.LENGTH_SHORT).show();
+                });
+            });
+        });
         BaseAdapter adapter = new BaseAdapter() {
             public int getCount() { return shown.size(); }
             public Object getItem(int i) { return shown.get(i); }
             public long getItemId(int i) { return i; }
             public View getView(int i, View convert, ViewGroup parent) {
-                return row(ctx, convert, shown.get(i), fg, dim, red);
+                return row(ctx, convert, shown.get(i), fg, dim, red, onMore);
             }
         };
+        adapterRef[0] = adapter;
         list.setAdapter(adapter);
         list.setOnItemClickListener((p, v, i, id) -> {
             Item it = shown.get(i);
@@ -126,17 +152,11 @@ final class HistoryDialog {
             open(ctx, it);
         });
 
-        boolean[] courseOnly = {false};
         Runnable filter = () -> {
-            shown.clear();
-            for (Item it : items) if (!courseOnly[0] || !TextUtils.isEmpty(it.course)) shown.add(it);
             style(all, !courseOnly[0], fg, bg, chipOff);
             style(courses, courseOnly[0], fg, bg, chipOff);
-            adapter.notifyDataSetChanged();
+            refresh.run();
             list.setSelection(0);
-            status.setVisibility(shown.isEmpty() ? View.VISIBLE : View.GONE);
-            list.setVisibility(shown.isEmpty() ? View.GONE : View.VISIBLE);
-            if (shown.isEmpty()) status.setText(courseOnly[0] ? "No courses yet" : "Nothing watched yet");
         };
         all.setOnClickListener(v -> { courseOnly[0] = false; filter.run(); });
         courses.setOnClickListener(v -> { courseOnly[0] = true; filter.run(); });
@@ -150,6 +170,14 @@ final class HistoryDialog {
             w.setBackgroundDrawable(new android.graphics.drawable.ColorDrawable(bg));
             w.setStatusBarColor(bg);
             w.setNavigationBarColor(bg);
+            // Bars in the page's color like YouTube's own pages, not the system's light scrim.
+            w.setNavigationBarContrastEnforced(false);
+            w.setStatusBarContrastEnforced(false);
+            boolean light = android.graphics.Color.luminance(bg) > 0.5f;
+            int bars = android.view.WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS
+                    | android.view.WindowInsetsController.APPEARANCE_LIGHT_NAVIGATION_BARS;
+            android.view.WindowInsetsController c = w.getInsetsController();
+            if (c != null) c.setSystemBarsAppearance(light ? bars : 0, bars);
         }
         dialog.show();
 
@@ -202,11 +230,13 @@ final class HistoryDialog {
         ctx.startActivity(intent);
     }
 
-    private static View row(Context ctx, View convert, Item it, int fg, int dim, int red) {
+    private static View row(Context ctx, View convert, Item it, int fg, int dim, int red,
+                            java.util.function.Consumer<Item> onMore) {
         LinearLayout row;
         ImageView thumb;
         View bar;
         TextView name, meta, badge;
+        ImageView more;
         if (convert instanceof LinearLayout && convert.getTag() instanceof Object[]) {
             row = (LinearLayout) convert;
             Object[] h = (Object[]) row.getTag();
@@ -215,6 +245,7 @@ final class HistoryDialog {
             name = (TextView) h[2];
             meta = (TextView) h[3];
             badge = (TextView) h[4];
+            more = (ImageView) h[5];
         } else {
             row = new LinearLayout(ctx);
             row.setPadding(dp(ctx, 12), dp(ctx, 6), dp(ctx, 12), dp(ctx, 6));
@@ -254,10 +285,19 @@ final class HistoryDialog {
             meta.setPadding(0, dp(ctx, 4), 0, 0);
             texts.addView(meta);
             row.addView(texts, new LinearLayout.LayoutParams(0, -2, 1));
-            row.setTag(new Object[]{thumb, bar, name, meta, badge});
+            more = new ImageView(ctx);
+            int dots = Ui.id(ctx, "drawable", "yt_outline_overflow_vertical_vd_theme_24");
+            if (dots == 0) dots = Ui.id(ctx, "drawable", "yt_outline_overflow_vertical_black_24");
+            if (dots != 0) more.setImageResource(dots);
+            more.setColorFilter(fg);
+            more.setScaleType(ImageView.ScaleType.CENTER);
+            more.setFocusable(false);
+            row.addView(more, new LinearLayout.LayoutParams(dp(ctx, 40), dp(ctx, 40)));
+            row.setTag(new Object[]{thumb, bar, name, meta, badge, more});
         }
 
         name.setText(it.title);
+        more.setOnClickListener(v -> onMore.accept(it));
         StringBuilder m = new StringBuilder();
         if (!it.channel.isEmpty()) m.append(it.channel).append('\n');
         if (it.last > 0) m.append(DateFormat.getDateInstance(DateFormat.MEDIUM).format(new Date((long) (it.last * 1000))));
@@ -287,6 +327,53 @@ final class HistoryDialog {
             });
         }
         return row;
+    }
+
+    /** YouTube-like bottom sheet with the one action a history entry has. */
+    private static void menu(Context ctx, int fg, Runnable remove) {
+        Dialog sheet = new Dialog(ctx, android.R.style.Theme_Black_NoTitleBar);
+        LinearLayout box = new LinearLayout(ctx);
+        box.setOrientation(LinearLayout.VERTICAL);
+        box.setPadding(0, dp(ctx, 12), 0, dp(ctx, 16));
+        GradientDrawable bg = new GradientDrawable();
+        bg.setColor(Ui.attr(ctx, "ytRaisedBackground", Ui.attr(ctx, "ytMenuBackground", 0xFF212121)));
+        float r = dp(ctx, 12);
+        bg.setCornerRadii(new float[]{r, r, r, r, 0, 0, 0, 0});
+        box.setBackground(bg);
+
+        LinearLayout item = new LinearLayout(ctx);
+        item.setGravity(Gravity.CENTER_VERTICAL);
+        item.setPadding(dp(ctx, 16), dp(ctx, 12), dp(ctx, 16), dp(ctx, 12));
+        ImageView icon = new ImageView(ctx);
+        int trash = Ui.id(ctx, "drawable", "yt_outline_trash_can_black_24");
+        if (trash != 0) icon.setImageResource(trash);
+        icon.setColorFilter(fg);
+        item.addView(icon, new LinearLayout.LayoutParams(dp(ctx, 24), dp(ctx, 24)));
+        TextView label = Ui.text(ctx, Ui.str(ctx, "remove", "Remove"), 16, fg);
+        label.setPadding(dp(ctx, 24), 0, 0, 0);
+        item.addView(label);
+        android.util.TypedValue ripple = new android.util.TypedValue();
+        if (ctx.getTheme().resolveAttribute(android.R.attr.selectableItemBackground, ripple, true)) {
+            item.setBackgroundResource(ripple.resourceId);
+        }
+        item.setOnClickListener(v -> {
+            sheet.dismiss();
+            remove.run();
+        });
+        box.addView(item);
+
+        sheet.setContentView(box);
+        sheet.setCanceledOnTouchOutside(true);
+        Window w = sheet.getWindow();
+        if (w != null) {
+            w.setBackgroundDrawable(new android.graphics.drawable.ColorDrawable(Color.TRANSPARENT));
+            w.setGravity(Gravity.BOTTOM);
+            int width = Math.min(ctx.getResources().getDisplayMetrics().widthPixels, dp(ctx, 560));
+            w.setLayout(width, ViewGroup.LayoutParams.WRAP_CONTENT);
+            w.setDimAmount(0.5f);
+            w.addFlags(android.view.WindowManager.LayoutParams.FLAG_DIM_BEHIND);
+        }
+        sheet.show();
     }
 
     private static TextView chip(Context ctx, String s) {
