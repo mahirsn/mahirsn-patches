@@ -114,7 +114,6 @@ public final class WatchHistory {
             long pos = (long) (number(body, "pos") * 1000);
             long len = (long) (number(body, "len") * 1000);
             main.post(() -> {
-                Log.i(TAG, "saved position of " + asked + ": " + pos + " / " + len);
                 if (!asked.equals(videoId) || pos <= RESUME_MIN_MS || (len > 0 && pos >= len - RESUME_END_MS)) return;
                 resumeFor = asked;
                 resumeAtMs = pos;
@@ -207,7 +206,6 @@ public final class WatchHistory {
             Log.i(TAG, "prompt: no place in the player");
             return;
         }
-        Log.i(TAG, "prompt: shown");
         prompt = chip;
         main.postDelayed(() -> { if (prompt == chip) dismissPrompt(); }, PROMPT_SHOWN_MS);
     }
@@ -268,7 +266,6 @@ public final class WatchHistory {
      * both exist before it patches anything.
      */
     private static void onPlayerButtons(View sourceButton) {
-        Log.i(TAG, "player buttons, legacy " + legacyButtons());
         playerView = new WeakReference<>(sourceButton);
         if (legacyButtons() || !Prefs.BUTTON.get()) return;
         try {
@@ -282,7 +279,6 @@ public final class WatchHistory {
     }
 
     private static void onLegacyControls(View controls) {
-        Log.i(TAG, "legacy controls, legacy " + legacyButtons());
         playerView = new WeakReference<>(controls);
         if (!legacyButtons()) return;
         try {
@@ -360,9 +356,7 @@ public final class WatchHistory {
         historyTabs.add(new WeakReference<>(tab));
         // The app may deliver the tap as a click on the button (performClick) rather than as touches.
         tab.setOnClickListener(OPEN_HISTORY);
-        Log.i(TAG, "history tab: " + tab + " in " + bar);
         tab.setOnTouchListener((v, e) -> {
-            Log.i(TAG, "history tab touch " + e.getActionMasked());
             if (e.getActionMasked() == MotionEvent.ACTION_UP) HistoryDialog.show(v.getContext());
             return true;
         });
@@ -370,7 +364,6 @@ public final class WatchHistory {
             bar.setTag(TAG_KEY, true);
             bar.setOnTouchListener((v, e) -> {
                 View hit = historyTabAt(e.getRawX(), e.getRawY());
-                Log.i(TAG, "bar touch " + e.getActionMasked() + " hit " + (hit != null));
                 if (hit == null) return false;
                 if (e.getActionMasked() == MotionEvent.ACTION_UP) HistoryDialog.show(v.getContext());
                 return true;
@@ -379,7 +372,6 @@ public final class WatchHistory {
     }
 
     private static final View.OnClickListener OPEN_HISTORY = v -> {
-        Log.i(TAG, "history tab click");
         HistoryDialog.show(v.getContext());
     };
 

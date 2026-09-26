@@ -54,7 +54,6 @@ final class HistoryDialog {
     }
 
     static void show(Context ctx) {
-        android.util.Log.i("WatchHistory", "history dialog for " + ctx);
         // YouTube's theme colors and font, whichever of light or dark the app is in.
         int bg = Ui.attr(ctx, "ytBaseBackground", Color.WHITE);
         int fg = Ui.attr(ctx, "ytTextPrimary", 0xFF0F0F0F);
@@ -92,9 +91,18 @@ final class HistoryDialog {
         chips.addView(courses);
         root.addView(chips);
 
-        TextView status = Ui.text(ctx, "…", 14, dim);
-        status.setPadding(dp(ctx, 16), dp(ctx, 24), dp(ctx, 16), 0);
-        root.addView(status);
+        // The app's own spinner while loading, then its own words if there is no connection.
+        android.widget.ProgressBar spinner = new android.widget.ProgressBar(ctx);
+        spinner.setIndeterminateTintList(android.content.res.ColorStateList.valueOf(dim));
+        LinearLayout.LayoutParams slp = new LinearLayout.LayoutParams(dp(ctx, 36), dp(ctx, 36));
+        slp.gravity = Gravity.CENTER_HORIZONTAL;
+        slp.topMargin = dp(ctx, 48);
+        root.addView(spinner, slp);
+        TextView status = Ui.text(ctx, "", 14, dim);
+        status.setGravity(Gravity.CENTER_HORIZONTAL);
+        status.setPadding(dp(ctx, 16), dp(ctx, 48), dp(ctx, 16), 0);
+        status.setVisibility(View.GONE);
+        root.addView(status, new LinearLayout.LayoutParams(-1, -2));
 
         List<Item> items = new ArrayList<>();
         List<Item> shown = new ArrayList<>();
@@ -149,8 +157,10 @@ final class HistoryDialog {
             String body = WatchHistory.request("GET", "/history?limit=500", null);
             List<Item> loaded = parse(body);
             WatchHistory.main.post(() -> {
+                spinner.setVisibility(View.GONE);
                 if (loaded == null) {
-                    status.setText("–");
+                    status.setText(Ui.str(ctx, "offline_no_content_body_text_not_offline_eligible", "No connection"));
+                    status.setVisibility(View.VISIBLE);
                     return;
                 }
                 items.addAll(loaded);
