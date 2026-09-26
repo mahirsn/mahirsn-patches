@@ -1,3 +1,9 @@
+## [1.1.0-dev.7](https://github.com/mahirsn/mahirsn-patches/compare/v1.1.0-dev.6...v1.1.0-dev.7) (2026-09-26)
+
+### 🐛 Bug Fixes
+
+* Personal history sits among the Morphe settings sections, with an icon like theirs ([eace650](https://github.com/mahirsn/mahirsn-patches/commit/eace65064a70a0ee2df61999ad65726f610c3694))
+
 ## [1.1.0-dev.6](https://github.com/mahirsn/mahirsn-patches/compare/v1.1.0-dev.5...v1.1.0-dev.6) (2026-09-26)
 
 ### 🐛 Bug Fixes
