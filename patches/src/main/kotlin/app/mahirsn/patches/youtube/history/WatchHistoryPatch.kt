@@ -117,10 +117,12 @@ private fun vector(fill: String) = """<?xml version="1.0" encoding="utf-8"?>
  * Settings, merged into the Morphe settings by its settings patch (see "Add-on preferences" in
  * Morphe Patches). Keys match WatchHistory.Prefs.
  */
+// The Morphe settings list its sections by key: this one comes right after Player, with an
+// icon drawn like theirs (outline, in the text color).
 private const val PREFERENCES = """
     <screen>
-        <PreferenceScreen android:key="mahirsn_history_screen" android:title="Personal history"
-            android:summary="Watch history and resume positions on your own server">
+        <PreferenceScreen android:key="morphe_settings_screen_05_zz_personal_history" android:title="Personal history"
+            android:icon="@drawable/mahirsn_settings_history">
             <SwitchPreference android:key="mahirsn_history_resume_ask" android:defaultValue="true"
                 android:title="Ask to continue"
                 android:summaryOn="A video you watched before offers &quot;Continue at 12:34&quot; for a few seconds"
@@ -147,6 +149,7 @@ private val watchHistoryResourcesPatch = resourcePatch {
         // the same pair every Morphe player button has.
         get("res/drawable/mahirsn_history_resume.xml").writeText(vector("#FFFFFFFF"))
         get("res/drawable/mahirsn_history_resume_bold.xml").writeText(vector("#FFFFFFFF"))
+        get("res/drawable/mahirsn_settings_history.xml").writeText(vector("?android:attr/textColorPrimary"))
         // Navigation bar fallback, where the app has no history icon of its own.
         get("res/drawable/mahirsn_history_tab.xml").writeText(vector("?android:attr/textColorPrimary"))
 
