@@ -46,7 +46,7 @@ public final class WatchHistory {
     private static final long RESUME_MIN_MS = 15_000;   // not from the first seconds…
     private static final long RESUME_END_MS = 20_000;   // …nor from the credits
     private static final long RESUME_WINDOW_MS = 5_000; // only right after the video starts
-    private static final long PROMPT_SHOWN_MS = 10_000;
+    private static final long PROMPT_SHOWN_MS = 15_000;
 
     /** Settings, in Morphe settings > Personal history. Keys match the preferences WatchHistoryPatch adds. */
     static final class Prefs {
@@ -324,6 +324,7 @@ public final class WatchHistory {
         tab.setVisibility(View.VISIBLE);
         Context ctx = tab.getContext();
         String label = Ui.str(ctx, "morphe_change_start_page_entry_history", "History");
+        tab.setContentDescription(label);
 
         if (tab instanceof ViewGroup) {
             // YouTube's own history icon, tinted by the theme like the other buttons.
@@ -331,19 +332,56 @@ public final class WatchHistory {
             TextView text = Ui.find((ViewGroup) tab, TextView.class);
             int res = Ui.id(ctx, "drawable", "yt_outline_experimental_history_vd_theme_24");
             if (res == 0) res = Ui.id(ctx, "drawable", "mahirsn_history_tab");
-            if (icon != null && res != 0) icon.setImageResource(res);
+            final int historyIcon = res;
+            if (icon != null && historyIcon != 0) {
+                icon.setImageResource(historyIcon);
+                android.graphics.drawable.Drawable[] ours = {icon.getDrawable()};
+                // The app sets the button's own icon again whenever the selected button changes
+                // (a filled Home when Home is the start page); put History back before drawing.
+                icon.getViewTreeObserver().addOnPreDrawListener(() -> {
+                    if (icon.getDrawable() != ours[0]) {
+                        icon.setImageResource(historyIcon);
+                        ours[0] = icon.getDrawable();
+                    }
+                    return true;
+                });
+            }
             if (text != null) text.setText(label);
         }
-        tab.setContentDescription(label);
-        // A touch listener runs before the app's own click handling, which would open Shorts or
-        // Home, and the app does not replace it when it rebinds the button.
+
+        // The navigation bar handles touches itself rather than through each button, so the
+        // taps on this button are taken at the bar, before it would open Shorts or Home.
+        View bar = tab;
+        while (bar.getParent() instanceof View && Ui.id(ctx, "id", "pivot_bar") != bar.getId()) bar = (View) bar.getParent();
+        if (Ui.id(ctx, "id", "pivot_bar") != bar.getId()) bar = (View) tab.getParent();
+        historyTabs.add(new WeakReference<>(tab));
         tab.setOnTouchListener((v, e) -> {
-            if (e.getActionMasked() == MotionEvent.ACTION_UP
-                    && e.getX() >= 0 && e.getY() >= 0 && e.getX() <= v.getWidth() && e.getY() <= v.getHeight()) {
-                HistoryDialog.show(v.getContext());
-            }
+            if (e.getActionMasked() == MotionEvent.ACTION_UP) HistoryDialog.show(v.getContext());
             return true;
         });
+        if (bar != null && bar.getTag(TAG_KEY) == null) {
+            bar.setTag(TAG_KEY, true);
+            bar.setOnTouchListener((v, e) -> {
+                View hit = historyTabAt(e.getRawX(), e.getRawY());
+                if (hit == null) return false;
+                if (e.getActionMasked() == MotionEvent.ACTION_UP) HistoryDialog.show(v.getContext());
+                return true;
+            });
+        }
+    }
+
+    private static final int TAG_KEY = 0x6d61686e; // any id outside the app's
+    private static final java.util.List<WeakReference<View>> historyTabs = new java.util.ArrayList<>();
+
+    private static View historyTabAt(float x, float y) {
+        int[] at = new int[2];
+        for (WeakReference<View> ref : historyTabs) {
+            View t = ref.get();
+            if (t == null || !t.isShown()) continue;
+            t.getLocationOnScreen(at);
+            if (x >= at[0] && x < at[0] + t.getWidth() && y >= at[1] && y < at[1] + t.getHeight()) return t;
+        }
+        return null;
     }
 
     // --- helpers ------------------------------------------------------------------------------
