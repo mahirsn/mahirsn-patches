@@ -1,3 +1,9 @@
+## [1.1.0-dev.3](https://github.com/mahirsn/mahirsn-patches/compare/v1.1.0-dev.2...v1.1.0-dev.3) (2026-09-26)
+
+### 🐛 Bug Fixes
+
+* Wait longer for the player before offering to continue, and log why it was not offered ([bd7a918](https://github.com/mahirsn/mahirsn-patches/commit/bd7a918155317088104d9ed44afef5af9d9dd8bd))
+
 ## [1.1.0-dev.2](https://github.com/mahirsn/mahirsn-patches/compare/v1.1.0-dev.1...v1.1.0-dev.2) (2026-09-26)
 
 ### 🐛 Bug Fixes
