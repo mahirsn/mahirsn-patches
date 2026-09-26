@@ -122,7 +122,8 @@ private fun vector(fill: String) = """<?xml version="1.0" encoding="utf-8"?>
 private const val PREFERENCES = """
     <screen>
         <PreferenceScreen android:key="morphe_settings_screen_05_zz_personal_history" android:title="Personal history"
-            android:icon="@drawable/mahirsn_settings_history">
+            android:icon="@drawable/mahirsn_settings_history" android:layout="@layout/preference_with_icon"
+            app:iconSpaceReserved="true">
             <SwitchPreference android:key="mahirsn_history_resume_ask" android:defaultValue="true"
                 android:title="Ask to continue"
                 android:summaryOn="A video you watched before offers &quot;Continue at 12:34&quot; for a few seconds"
@@ -155,15 +156,23 @@ private val watchHistoryResourcesPatch = resourcePatch {
 
         // Other add-ons may have declared preferences in the same file already.
         val declarations = get(ADD_ON_PREFERENCES_FILE)
-        val root = "<morphe-add-on-preferences xmlns:android=\"http://schemas.android.com/apk/res/android\">"
+        val root = "<morphe-add-on-preferences xmlns:android=\"http://schemas.android.com/apk/res/android\" " +
+            "xmlns:app=\"http://schemas.android.com/apk/res-auto\">"
         val existing = if (declarations.exists()) declarations.readText() else "$root\n</morphe-add-on-preferences>\n"
         val end = existing.lastIndexOf("</morphe-add-on-preferences>")
         if (end < 0) throw PatchException("Unexpected $ADD_ON_PREFERENCES_FILE")
         val merged = existing.substring(0, end) + PREFERENCES + existing.substring(end)
-        declarations.writeText(
-            if (merged.contains("xmlns:android")) merged
-            else merged.replaceFirst("<morphe-add-on-preferences", "<morphe-add-on-preferences xmlns:android=\"http://schemas.android.com/apk/res/android\"")
-        )
+        // An existing file may not declare the namespaces this one uses.
+        var withNamespaces = merged
+        mapOf(
+            "xmlns:android" to "http://schemas.android.com/apk/res/android",
+            "xmlns:app" to "http://schemas.android.com/apk/res-auto",
+        ).forEach { (prefix, uri) ->
+            if (!withNamespaces.contains("$prefix=")) {
+                withNamespaces = withNamespaces.replaceFirst("<morphe-add-on-preferences", "<morphe-add-on-preferences $prefix=\"$uri\"")
+            }
+        }
+        declarations.writeText(withNamespaces)
     }
 }
 
