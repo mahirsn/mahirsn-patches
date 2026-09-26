@@ -1,7 +1,7 @@
 {
-  "created_at": "2026-09-26T13:29:48",
-  "description": "## [1.1.0-dev.1](https://github.com/mahirsn/mahirsn-patches/compare/v1.0.3...v1.1.0-dev.1) (2026-09-26)\n\n### ✨ New Features\n\n* Continue prompt and button, a history screen, History in place of Shorts or Home, and a Personal history settings section ([3224102](https://github.com/mahirsn/mahirsn-patches/commit/3224102858b089d59d538317f5634318ad93382c))",
-  "download_url": "https://github.com/mahirsn/mahirsn-patches/releases/download/v1.1.0-dev.1/patches-1.1.0-dev.1.mpp",
+  "created_at": "2026-09-26T14:23:13",
+  "description": "## [1.1.0-dev.2](https://github.com/mahirsn/mahirsn-patches/compare/v1.1.0-dev.1...v1.1.0-dev.2) (2026-09-26)\n\n### 🐛 Bug Fixes\n\n* Use the app's own look for the continue chip, the history screen and the History button, and the old style player buttons when those are on ([f299d57](https://github.com/mahirsn/mahirsn-patches/commit/f299d57e56f2ff098e5e3649f51620d9e11038f1))",
+  "download_url": "https://github.com/mahirsn/mahirsn-patches/releases/download/v1.1.0-dev.2/patches-1.1.0-dev.2.mpp",
   "signature_download_url": "",
-  "version": "1.1.0-dev.1"
+  "version": "1.1.0-dev.2"
 }

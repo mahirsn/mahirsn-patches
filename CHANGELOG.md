@@ -1,3 +1,9 @@
+## [1.1.0-dev.2](https://github.com/mahirsn/mahirsn-patches/compare/v1.1.0-dev.1...v1.1.0-dev.2) (2026-09-26)
+
+### 🐛 Bug Fixes
+
+* Use the app's own look for the continue chip, the history screen and the History button, and the old style player buttons when those are on ([f299d57](https://github.com/mahirsn/mahirsn-patches/commit/f299d57e56f2ff098e5e3649f51620d9e11038f1))
+
 ## [1.1.0-dev.1](https://github.com/mahirsn/mahirsn-patches/compare/v1.0.3...v1.1.0-dev.1) (2026-09-26)
 
 ### ✨ New Features
